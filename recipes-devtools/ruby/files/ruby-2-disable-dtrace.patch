@@ -1,0 +1,13 @@
+Index: ruby-2.1.5/configure.in
+===================================================================
+--- ruby-2.1.5.orig/configure.in
++++ ruby-2.1.5/configure.in
+@@ -3336,7 +3336,7 @@ fi
+ AC_ARG_ENABLE(dtrace,
+         AS_HELP_STRING([--enable-dtrace],
+         [enable DTrace for tracing inside ruby. enabled by default on systems having dtrace]),
+-        [enable_dtrace=$enableval], [enable_dtrace=auto])
++        [enable_dtrace=$enableval], [enable_dtrace=no])
+ 
+ if test "${enable_dtrace}" = "auto"; then
+     if test x"$DTRACE" != x -a x"$cross_compiling" != xyes; then

@@ -1,0 +1,13 @@
+Index: ruby-2.1.5/lib/mkmf.rb
+===================================================================
+--- ruby-2.1.5.orig/lib/mkmf.rb
++++ ruby-2.1.5/lib/mkmf.rb
+@@ -1829,7 +1829,7 @@ SRC
+ SHELL = /bin/sh
+ 
+ # V=0 quiet, V=1 verbose.  other values don't work.
+-V = 0
++V = 1
+ Q1 = $(V:1=)
+ Q = $(Q1:0=@)
+ ECHO1 = $(V:1=@#{CONFIG['NULLCMD']})

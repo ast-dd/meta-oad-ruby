@@ -1,0 +1,33 @@
+*** treetop-1.4.15/treetop-1.4.15.gemspec       2014-12-05 23:52:14.867927565 +0100
+--- treetop-1.4.15/treetop-1.4.15.gemspec.new   2014-12-05 23:50:28.543923504 +0100
+*************** Gem::Specification.new do |s|
+*** 23,29 ****
+      s.specification_version = 3
+  
+      if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+-       s.add_runtime_dependency(%q<polyglot>, [">= 0"])
+        s.add_development_dependency(%q<jeweler>, [">= 0"])
+        s.add_development_dependency(%q<activesupport>, [">= 0"])
+        s.add_development_dependency(%q<i18n>, ["~> 0.5.0"])
+--- 23,28 ----
+*************** Gem::Specification.new do |s|
+*** 32,38 ****
+        s.add_development_dependency(%q<rake>, [">= 0"])
+        s.add_runtime_dependency(%q<polyglot>, [">= 0.3.1"])
+      else
+-       s.add_dependency(%q<polyglot>, [">= 0"])
+        s.add_dependency(%q<jeweler>, [">= 0"])
+        s.add_dependency(%q<activesupport>, [">= 0"])
+        s.add_dependency(%q<i18n>, ["~> 0.5.0"])
+--- 31,36 ----
+*************** Gem::Specification.new do |s|
+*** 42,48 ****
+        s.add_dependency(%q<polyglot>, [">= 0.3.1"])
+      end
+    else
+-     s.add_dependency(%q<polyglot>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
+      s.add_dependency(%q<i18n>, ["~> 0.5.0"])
+--- 40,45 ----
+

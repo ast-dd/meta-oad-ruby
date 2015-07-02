@@ -1,0 +1,157 @@
+Index: ruby-2.2.1/configure.in
+===================================================================
+--- ruby-2.2.1.orig/configure.in
++++ ruby-2.2.1/configure.in
+@@ -3971,7 +3971,22 @@ AS_CASE(["$target_os"],
+     rubyw_install_name='$(RUBYW_INSTALL_NAME)'
+     ])
+ 
+-rubylibdir='${rubylibprefix}/${ruby_version}'
++AC_ARG_ENABLE(versioned-paths,
++              AS_HELP_STRING([--disable-versioned-paths], [disable paths with version number]),
++              [enable_versioned_paths="$enableval"], [enable_versioned_paths=yes])
++if test x"$enable_versioned_paths" = xno; then
++    AC_DEFINE(DISABLE_VERSIONED_PATHS, 1)
++    USE_VERSIONED_PATHS=NO
++else
++    USE_VERSIONED_PATHS=YES
++fi
++AC_SUBST(USE_VERSIONED_PATHS)
++
++if test "$USE_VERSIONED_PATHS" = "YES"; then
++	rubylibdir='${rubylibprefix}/${ruby_version}'
++else
++	rubylibdir='${rubylibprefix}'
++fi
+ rubyarchdir=${multiarch+'${rubyarchprefix}/${ruby_version}'}${multiarch-'${rubylibdir}/${arch}'}
+ 
+ rubyarchprefix=${multiarch+'${archlibdir}/${RUBY_BASE_NAME}'}${multiarch-'${rubylibprefix}/${arch}'}
+@@ -4029,7 +4044,11 @@ AC_ARG_WITH(sitedir,
+ 	    AS_HELP_STRING([--with-sitedir=DIR], [site libraries in DIR [[RUBY_LIB_PREFIX/site_ruby]], "no" to disable site directory]),
+             [sitedir=$withval],
+             [sitedir='${rubylibprefix}/site_ruby'])
+-sitelibdir='${sitedir}/${ruby_version}'
++if test "$USE_VERSIONED_PATHS" = "YES"; then
++	sitelibdir='${sitedir}/${ruby_version}'
++else
++	sitelibdir='${sitedir}'
++fi
+ 
+ AC_ARG_WITH(sitearchdir,
+ 	    AS_HELP_STRING([--with-sitearchdir=DIR],
+@@ -4041,7 +4060,11 @@ AC_ARG_WITH(vendordir,
+ 	    AS_HELP_STRING([--with-vendordir=DIR], [vendor libraries in DIR [[RUBY_LIB_PREFIX/vendor_ruby]], "no" to disable vendor directory]),
+             [vendordir=$withval],
+             [vendordir='${rubylibprefix}/vendor_ruby'])
+-vendorlibdir='${vendordir}/${ruby_version}'
++if test "$USE_VERSIONED_PATHS" = "YES"; then
++	vendorlibdir='${vendordir}/${ruby_version}'
++else
++	vendorlibdir='${vendordir}'
++fi
+ 
+ AC_ARG_WITH(vendorarchdir,
+ 	    AS_HELP_STRING([--with-vendorarchdir=DIR],
+Index: ruby-2.2.1/lib/rdoc/ri/paths.rb
+===================================================================
+--- ruby-2.2.1.orig/lib/rdoc/ri/paths.rb
++++ ruby-2.2.1/lib/rdoc/ri/paths.rb
+@@ -12,9 +12,9 @@ module RDoc::RI::Paths
+   version = RbConfig::CONFIG['ruby_version']
+ 
+   BASE    = if RbConfig::CONFIG.key? 'ridir' then
+-              File.join RbConfig::CONFIG['ridir'], version
++              File.join [RbConfig::CONFIG['ridir'], RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? version : nil].compact
+             else
+-              File.join RbConfig::CONFIG['datadir'], 'ri', version
++              File.join [RbConfig::CONFIG['datadir'], 'ri', RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? version : nil].compact
+             end
+ 
+   homedir = begin
+Index: ruby-2.2.1/tool/rbinstall.rb
+===================================================================
+--- ruby-2.2.1.orig/tool/rbinstall.rb
++++ ruby-2.2.1/tool/rbinstall.rb
+@@ -396,7 +396,7 @@ end
+ 
+ install?(:doc, :rdoc) do
+   if $rdocdir
+-    ridatadir = File.join(CONFIG['ridir'], CONFIG['ruby_version'], "system")
++    ridatadir = File.join([CONFIG['ridir'], RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? version : nil, "system"].compact)
+     prepare "rdoc", ridatadir
+     install_recursive($rdocdir, ridatadir, :mode => $data_mode)
+   end
+Index: ruby-2.2.1/loadpath.c
+===================================================================
+--- ruby-2.2.1.orig/loadpath.c
++++ ruby-2.2.1/loadpath.c
+@@ -40,11 +40,19 @@
+ 
+ typedef char ruby_lib_version_string[(int)sizeof(RUBY_LIB_VERSION) - 2];
+ 
++#ifdef DISABLE_VERSIONED_PATHS
++#ifndef RUBY_LIB
++#define RUBY_LIB                    RUBY_LIB_PREFIX
++#endif
++#define RUBY_SITE_LIB2              RUBY_SITE_LIB
++#define RUBY_VENDOR_LIB2            RUBY_VENDOR_LIB
++#else
+ #ifndef RUBY_LIB
+ #define RUBY_LIB                    RUBY_LIB_PREFIX  "/"RUBY_LIB_VERSION
+ #endif
+ #define RUBY_SITE_LIB2              RUBY_SITE_LIB    "/"RUBY_LIB_VERSION
+ #define RUBY_VENDOR_LIB2            RUBY_VENDOR_LIB  "/"RUBY_LIB_VERSION
++#endif
+ #ifndef RUBY_ARCH_LIB_FOR
+ #define RUBY_ARCH_LIB_FOR(arch)        RUBY_LIB         "/"arch
+ #endif
+@@ -70,8 +78,10 @@ const char ruby_initial_load_paths[] =
+     RUBY_SITE_ARCH_LIB_FOR(RUBY_THINARCH) "\0"
+ #endif
+     RUBY_SITE_ARCH_LIB_FOR(RUBY_SITEARCH) "\0"
++#ifndef DISABLE_VERSIONED_PATHS
+     RUBY_SITE_LIB "\0"
+ #endif
++#endif
+ 
+ #ifndef NO_RUBY_VENDOR_LIB
+     RUBY_VENDOR_LIB2 "\0"
+@@ -79,8 +89,10 @@ const char ruby_initial_load_paths[] =
+     RUBY_VENDOR_ARCH_LIB_FOR(RUBY_THINARCH) "\0"
+ #endif
+     RUBY_VENDOR_ARCH_LIB_FOR(RUBY_SITEARCH) "\0"
++#ifndef DISABLE_VERSIONED_PATHS
+     RUBY_VENDOR_LIB "\0"
+ #endif
++#endif
+ 
+     RUBY_LIB "\0"
+ #ifdef RUBY_THINARCH
+Index: ruby-2.2.1/lib/rubygems/defaults.rb
+===================================================================
+--- ruby-2.2.1.orig/lib/rubygems/defaults.rb
++++ ruby-2.2.1/lib/rubygems/defaults.rb
+@@ -31,20 +31,20 @@ module Gem
+              [
+                File.dirname(RbConfig::CONFIG['sitedir']),
+                'Gems',
+-               RbConfig::CONFIG['ruby_version']
++               RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? RbConfig::CONFIG['ruby_version'] : ""
+              ]
+            elsif RbConfig::CONFIG['rubylibprefix'] then
+              [
+               RbConfig::CONFIG['rubylibprefix'],
+               'gems',
+-              RbConfig::CONFIG['ruby_version']
++              RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? RbConfig::CONFIG['ruby_version'] : ""
+              ]
+            else
+              [
+                RbConfig::CONFIG['libdir'],
+                ruby_engine,
+                'gems',
+-               RbConfig::CONFIG['ruby_version']
++              RbConfig::CONFIG['USE_VERSIONED_PATHS'] == 'YES' ? RbConfig::CONFIG['ruby_version'] : ""
+              ]
+            end
+ 

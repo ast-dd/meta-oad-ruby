@@ -1,0 +1,26 @@
+Index: ruby-2.2.1/lib/rubygems/specification.rb
+===================================================================
+--- ruby-2.2.1.orig/lib/rubygems/specification.rb
++++ ruby-2.2.1/lib/rubygems/specification.rb
+@@ -892,7 +892,8 @@ class Gem::Specification < Gem::BasicSpe
+     return enum_for(:each) unless block_given?
+ 
+     self._all.each do |x|
+-      yield x
++      # This fix some issues with multiple gem processes manipulating specs
++      yield x if x
+     end
+   end
+ 
+Index: ruby-2.2.1/lib/rubygems/stub_specification.rb
+===================================================================
+--- ruby-2.2.1.orig/lib/rubygems/stub_specification.rb
++++ ruby-2.2.1/lib/rubygems/stub_specification.rb
+@@ -72,6 +72,7 @@ class Gem::StubSpecification < Gem::Basi
+     unless @data
+       @extensions = []
+ 
++      File.exist?(loaded_from) or return
+       open loaded_from, OPEN_MODE do |file|
+         begin
+           file.readline # discard encoding line

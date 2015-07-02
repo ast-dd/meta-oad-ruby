@@ -1,0 +1,12 @@
+diff -rupN hiredis-0.4.5/vendor/hiredis/Makefile hiredis-0.4.5.new/vendor/hiredis/Makefile
+--- hiredis-0.4.5/vendor/hiredis/Makefile	2013-12-20 12:06:24.118761419 +0100
++++ hiredis-0.4.5.new/vendor/hiredis/Makefile	2013-12-20 12:07:33.150861555 +0100
+@@ -11,7 +11,7 @@ HIREDIS_MAJOR=0
+ HIREDIS_MINOR=10
+ 
+ # Fallback to gcc when $CC is not in $PATH.
+-CC:=$(shell sh -c 'type $(CC) >/dev/null 2>/dev/null && echo $(CC) || echo gcc')
++#CC:=$(shell sh -c 'type $(CC) >/dev/null 2>/dev/null && echo $(CC) || echo gcc')
+ OPTIMIZATION?=-O3
+ WARNINGS=-Wall -W -Wstrict-prototypes -Wwrite-strings
+ DEBUG?= -g -ggdb

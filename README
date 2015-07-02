@@ -1,0 +1,23 @@
+OpenEmbedded/Yocto BSP layer for Rubygems
+=============================================
+
+This layer provides ruby and rubygems recipes for use with OpenEmbedded
+and/or Yocto.
+
+This layer depends on:
+
+URI: git://git.openembedded.org/openembedded-core
+branch: dizzy
+revision: HEAD
+
+URI: git://git.openembedded.org/meta-openembedded
+branch: dizzy
+revision: HEAD
+
+Contributing
+------------
+
+To contribute to this layer you should send pull request to Voxtok github.
+
+Maintainers: Sébastien Mennetrier <smennetrier@voxtok.com>
+             Michaël Burtin <mburtin@voxtok.com>
