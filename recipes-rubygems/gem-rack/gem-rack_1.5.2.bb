@@ -17,5 +17,7 @@ SRC_URI[sha256sum] = "e64af00234e8faaa69ea81ef4e3800f40743c69560f0dda8fc9969660e
 
 PR = "r0"
 
+SRC_URI_append = " file://gem-rack-temp_file_reaper.patch"
+
 inherit rubygems
 
