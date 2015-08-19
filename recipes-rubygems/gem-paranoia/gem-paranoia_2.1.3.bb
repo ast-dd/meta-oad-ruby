@@ -5,8 +5,8 @@ SECTION = "devel/ruby"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
-SRC_URI[md5sum] = "30a9c2a58daf78fe753b5fbff7df0ad5"
-SRC_URI[sha256sum] = "62a09105ae59f0cd4ff1a7e689b95c8554517d34dda9a083909f8c2a1376e93b"
+SRC_URI[md5sum] = "a2f8f93e554647f5d012afeceb733e53"
+SRC_URI[sha256sum] = "22d1c199f932821de19717a246502907c6a7b44ff427fbe962fc5ae4dafcd1ec"
 
 PR = "r0"
 
