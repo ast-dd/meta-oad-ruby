@@ -5,8 +5,8 @@ SECTION = "devel/ruby"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=fbc1780cb015057c6475ce5cfb4b2a4f"
 
-SRC_URI[md5sum] = "d138641eec151306bae20302b750fa0b"
-SRC_URI[sha256sum] = "8fa24558ed46e2b2d9a58baa78fd7d11cb7efa3ec7e2ec89a057f76dc3abcce4"
+SRC_URI[md5sum] = "eea1360cd1f601b6688722541f544d3e"
+SRC_URI[sha256sum] = "de1ce33da8c99ab1d97871726cba75151113f117146becbe45aa85cb3dabee3f"
 
 PR = "r0"
 
