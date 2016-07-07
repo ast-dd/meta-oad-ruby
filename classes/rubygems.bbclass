@@ -80,7 +80,7 @@ python () {
     if bb.data.inherits_class('native', d):
         d.appendVarFlag('do_unpack_gem', 'depends', ' ruby-native:do_populate_sysroot')
     else:
-        d.appendVarFlag('do_unpack_gem', 'depends', ' ruby-cross-%s:do_populate_sysroot' % d.getVar("TARGET_ARCH", True))
+        d.appendVarFlag('do_unpack_gem', 'depends', ' ruby-cross:do_populate_sysroot')
 }
 
 addtask unpack_gem after do_unpack before do_patch
